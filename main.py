@@ -12,7 +12,7 @@ imgs = []
 directory = filedialog.askdirectory(mustexist=True,title="Choose a folder with cards")
 
 for filename in sorted(os.listdir(directory)):
-    if filename.endswith(".png"):
+    if filename.endswith(".png") or filename.endswith(".jpg") or filename.endswith(".jpeg"):
         img = Image.open(os.path.join(directory, filename))
         imgs.append(img)
 
@@ -30,7 +30,7 @@ while True:
 
 num_rows = (len(imgs) + num_cols - 1) // num_cols
 
-# Fetches and stores the border in the same location as the .exe file
+
 borderURL = "https://i.imgur.com/AMBdG9m.png"
 filename = "border.png"
 
@@ -48,12 +48,11 @@ assert num_cols * num_rows == len(
 
 # This accounts for the slant of the grid as well as the white borders which are to be placed on top
 
-grdHght = imgHeight * num_rows + 121 * (num_cols - 1) + 310
-grdWdth = imgWidth * num_cols
+grdHght = 800 * num_rows + 121 * (num_cols - 1) + 310
+grdWdth = 600 * num_cols
 
 grid = Image.new("RGBA", (grdWdth, grdHght), (255, 0, 0, 0))
 
-# Used to place the white borders on top and bottom
 for i in range(len(imgs)):
     col = i % num_cols
     x = imgWidth * col
@@ -62,7 +61,6 @@ for i in range(len(imgs)):
     y = grdHght - 155 - 121 * (col)
     grid.paste(border, (x, y))
 
-# Placement of images/cards
 for i, img in enumerate(imgs):
     row = i // num_cols
     col = i % num_cols
@@ -71,5 +69,5 @@ for i, img in enumerate(imgs):
     grid.paste(img, (x, y))
     print(f"Image {i+1} plotted successfully!")
 
-#saving of the grid
+
 grid.save("grid.png")
