@@ -11,11 +11,11 @@ This project was built using [PyInstaller](https://github.com/pyinstaller/pyinst
 
 1. Generate a spec file with the given command
 ```bash
-pyinstaller --name GridGenerator --onefile ./main.py
+pyinstaller --name {AppName} --onefile ./main.py
 ```
 2. Use Generated spec file to build an executable
 ```bash
-pyinstaller .\GridGenerator.spec
+pyinstaller ./{AppName}.spec
 ```
 
 It will generate an executable in the `/dist` folder
