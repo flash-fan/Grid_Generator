@@ -37,3 +37,6 @@ It will generate an executable in the `/dist` folder
 - Horizontal grid option
 - Custom names for grid 
 - Custom location to save the grid
+- Grid formation for uneven number of images
+- Option to split a grid into two or more images
+- Allow for alphabetical v/s custom sorting
