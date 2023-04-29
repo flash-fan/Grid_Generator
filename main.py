@@ -1,4 +1,3 @@
-# import urllib.request
 import sys
 from PIL import Image
 import tkinter as tk
@@ -20,7 +19,6 @@ class Grid:
         self.root = tk.Tk()
         self.root.withdraw()
         self.borderName = self.resource_path("border.png")
-        # self.imgFetch()
 
         # Asking the user for which types of grid they want to generate
 
@@ -74,13 +72,6 @@ class Grid:
             self.imgs
         ), "Number of rows and columns does not match the number of images in the folder"
 
-    # def imgFetch(self):
-    #     self.borderName = "border.png"
-    #     with urllib.request.urlopen(BORDER_URL) as response, open(
-    #         self.borderName, "wb"
-    #     ) as outFile:
-    #         data = response.read()
-    #         outFile.write(data)
     def resource_path(self, relative_path):
         """ Get absolute path to resource, works for dev and for PyInstaller """
         try:
@@ -159,6 +150,9 @@ class Grid:
             else:
                 print("Image {:02d} successfully plotted!".format(i + 1))
 
+        qr.print(
+            "Vertiical Grid successfully generated\n", style="bold italic fg:green"
+        )
         grid.save("Grid-Vertical.png")
 
 
