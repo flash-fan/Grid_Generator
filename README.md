@@ -11,7 +11,7 @@ This project was built using [PyInstaller](https://github.com/pyinstaller/pyinst
 
 1. Generate a spec file with the given command
 ```bash
-pyinstaller --name {AppName} --onefile ./main.py
+pyinstaller --name {AppName} --onefile ./main.py --add-data="border.png;."
 ```
 2. Use Generated spec file to build an executable
 ```bash
