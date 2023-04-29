@@ -1,11 +1,12 @@
-import urllib.request
+# import urllib.request
+import sys
 from PIL import Image
 import tkinter as tk
 from tkinter import filedialog, simpledialog
 import os
 import questionary as qr
 
-#Constants
+# Constants
 IMG_HEIGHT = 800
 IMG_WIDTH = 600
 BORDER_URL = "https://i.imgur.com/AMBdG9m.png"
@@ -18,7 +19,8 @@ class Grid:
         self.imgs = []
         self.root = tk.Tk()
         self.root.withdraw()
-        self.imgFetch()
+        self.borderName = self.resource_path("border.png")
+        # self.imgFetch()
 
         # Asking the user for which types of grid they want to generate
 
@@ -29,7 +31,7 @@ class Grid:
             default=gridTypes[0],
         ).ask()
 
-        # Asking the user for the directory in which cards are stored 
+        # Asking the user for the directory in which cards are stored
         # + the number of columns in the grid
         self.dirChoose()
         self.columnChoose()
@@ -60,23 +62,34 @@ class Grid:
     def columnChoose(self):
         self.num_cols = 1
         while True:
-            self.num_cols = simpledialog.askinteger(
-                "Columns", "Enter the number of columns:"
-            )
-            if self.num_cols is not None and type(self.num_cols) == int:
+            self.num_cols: str = qr.text("Enter the number of columns: ").ask()
+            if self.num_cols is not None and self.num_cols.isdigit() == True:
+                self.num_cols = int(self.num_cols)
                 break
             else:
                 print("Invalid input! Please try again")
 
         self.num_rows = (len(self.imgs) + self.num_cols - 1) // self.num_cols
+        assert self.num_cols * self.num_rows == len(
+            self.imgs
+        ), "Number of rows and columns does not match the number of images in the folder"
 
-    def imgFetch(self):
-        self.borderName = "border.png"
-        with urllib.request.urlopen(BORDER_URL) as response, open(
-            self.borderName, "wb"
-        ) as outFile:
-            data = response.read()
-            outFile.write(data)
+    # def imgFetch(self):
+    #     self.borderName = "border.png"
+    #     with urllib.request.urlopen(BORDER_URL) as response, open(
+    #         self.borderName, "wb"
+    #     ) as outFile:
+    #         data = response.read()
+    #         outFile.write(data)
+    def resource_path(self, relative_path):
+        """ Get absolute path to resource, works for dev and for PyInstaller """
+        try:
+            # PyInstaller creates a temp folder and stores path in _MEIPASS
+            base_path = sys._MEIPASS
+        except Exception:
+            base_path = os.path.abspath(".")
+
+        return os.path.join(base_path, relative_path)
 
     def horizontalGrid(self):
         gridHeight = IMG_HEIGHT * self.num_rows
@@ -95,6 +108,9 @@ class Grid:
             else:
                 print("Image {:02d} successfully plotted!".format(i + 1))
 
+        qr.print(
+            "Horizontal Grid successfully generated\n", style="bold italic fg:green"
+        )
         grid.save("Grid-Horizontal.png")
 
     def verticalGrid(self):
