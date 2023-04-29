@@ -1,3 +1,4 @@
+import re
 import sys
 from PIL import Image
 import tkinter as tk
@@ -19,6 +20,7 @@ class Grid:
         self.root = tk.Tk()
         self.root.withdraw()
         self.borderName = self.resource_path("border.png")
+        # self.imgFetch()
 
         # Asking the user for which types of grid they want to generate
 
@@ -35,16 +37,40 @@ class Grid:
         self.columnChoose()
 
         if gridType == gridTypes[0]:
-            print("Plotting Horizontal Grid now...\n")
             self.horizontalGrid()
         elif gridType == gridTypes[1]:
-            print("Plotting Vertical Grid now...\n")
             self.verticalGrid()
         else:
-            print("Plotting Horizontal Grid now...\n")
             self.horizontalGrid()
-            print("Plotting Vertical Grid now...\n")
             self.verticalGrid()
+
+    def isValid(self, filename):
+        # Check if the filename contains any invalid characters
+        if re.search(r'[\\/:*?"<>|]', filename):
+            return False
+
+        # Check if the filename starts with a reserved name
+        reserved_names = [
+            "CON",
+            "PRN",
+            "AUX",
+            "NUL",
+            "COM1",
+            "COM2",
+            "COM3",
+            "COM4",
+            "LPT1",
+            "LPT2",
+            "LPT3",
+            "CLOCK$",
+        ]
+        if filename.upper().startswith(tuple(reserved_names)):
+            return False
+
+        if filename.rstrip().endswith(".") or " " in filename:
+            return False
+
+        return True
 
     def dirChoose(self):
         self.directory = filedialog.askdirectory(title="Choose a Folder with Cards")
@@ -73,7 +99,7 @@ class Grid:
         ), "Number of rows and columns does not match the number of images in the folder"
 
     def resource_path(self, relative_path):
-        """ Get absolute path to resource, works for dev and for PyInstaller """
+        # Get absolute path to resource, works for dev and for PyInstaller
         try:
             # PyInstaller creates a temp folder and stores path in _MEIPASS
             base_path = sys._MEIPASS
@@ -86,6 +112,21 @@ class Grid:
         gridHeight = IMG_HEIGHT * self.num_rows
         gridWidth = IMG_WIDTH * self.num_cols
         grid = Image.new("RGBA", (gridWidth, gridHeight), (255, 0, 0, 0))
+
+        customNameBool = qr.confirm(
+            "Would you like to choose a custom name for the horizontal grid?", default=False
+        ).ask()
+        if customNameBool:
+            while True:
+                customName = qr.text("Enter the name for the grid").ask()
+                if self.isValid(customName):
+                    break
+                else:
+                    print("Invalid filename!")
+        else:
+            customName = "Grid-Horizontal.png"
+
+        qr.print("Plotting Horizontal Grid now...", style="bold fg:yellow")
         for i, img in enumerate(self.imgs):
             rowNum = i // self.num_cols
             colNum = i % self.num_cols
@@ -102,13 +143,29 @@ class Grid:
         qr.print(
             "Horizontal Grid successfully generated\n", style="bold italic fg:green"
         )
-        grid.save("Grid-Horizontal.png")
+        grid.save(customName + ".png")
 
     def verticalGrid(self):
         gridHeight = (
             IMG_HEIGHT * self.num_rows + PADDING * (self.num_cols - 1) + BRDR_HEIGHT * 2
         )
         gridWidth = IMG_WIDTH * self.num_cols
+
+        customNameBool = qr.confirm(
+            "Would you like to choose a custom name for the vertical grid?", default=False
+        ).ask()
+        if customNameBool:
+            while True:
+                customName = qr.text("Enter the name for the grid").ask()
+                if self.isValid(customName):
+                    break
+                else:
+                    print("Invalid filename!")
+        else:
+            customName = "Grid-Vertical.png"
+
+        qr.print("Plotting Slanted Grid now...", style="bold fg:yellow")
+
         grid = Image.new("RGBA", (gridWidth, gridHeight), (255, 0, 0, 0))
         border = Image.open(self.borderName)
 
@@ -153,7 +210,7 @@ class Grid:
         qr.print(
             "Vertiical Grid successfully generated\n", style="bold italic fg:green"
         )
-        grid.save("Grid-Vertical.png")
+        grid.save(f"{customName}.png")
 
 
 if __name__ == "__main__":
