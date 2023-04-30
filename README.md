@@ -25,7 +25,7 @@ It will generate an executable in the `/dist` folder
 - Run the .exe file
 - Select the folder in which cards are stored (each card must be of dimensions 600x800px)
 - Specify the number of columns to be in the grid
-- Grid will be generated automatically in the same folder as the exe file with the name `grid.png`
+- Grid will be generated automatically in the same folder as the exe file with the name `grid.png` (or a custom name, if one is provided)
 
 
 ## Features to be added:
