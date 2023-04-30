@@ -1,10 +1,12 @@
-import re
-import sys
-from PIL import Image
-import tkinter as tk
-from tkinter import filedialog, simpledialog
 import os
+import re
+import string
+import sys
+import tkinter as tk
+from tkinter import filedialog
+
 import questionary as qr
+from PIL import Image, ImageDraw
 
 # Constants
 IMG_HEIGHT = 800
@@ -13,6 +15,16 @@ BORDER_URL = "https://i.imgur.com/AMBdG9m.png"
 PADDING = 121
 BRDR_HEIGHT = 155
 
+COLORS = {
+    "Blue": "#225379",
+    "Red": "#a70c20",
+    "Gray": "#141414",
+    "Green": "#4d9850",
+    "Dark Green": "#011f04",
+    "Black": "#000000",
+    "White": "#FFFFFF",
+}
+
 
 class Grid:
     def __init__(self) -> None:
@@ -20,7 +32,6 @@ class Grid:
         self.root = tk.Tk()
         self.root.withdraw()
         self.borderName = self.resource_path("border.png")
-        # self.imgFetch()
 
         # Asking the user for which types of grid they want to generate
 
@@ -108,13 +119,51 @@ class Grid:
 
         return os.path.join(base_path, relative_path)
 
+    def isValidHex(self, hex_code):
+        if not isinstance(hex_code, str):
+            return False
+        if len(hex_code) not in [7, 9]:
+            return False
+        if not all(c in string.hexdigits for c in hex_code[1:]):
+            return False
+        if hex_code[0] != "#":
+            return False
+        return True
+
+    def hexToRgb(self, hexCode):
+        return tuple(int(hexCode[i : i + 2], 16) for i in (1, 3, 5))
+
+    def colorChoose(self):
+        while True:
+            for i, (color_name, hex_code) in enumerate(COLORS.items()):
+                sys.stdout.write(
+                    f"{i+1}. {color_name}: \033[48;2;{int(hex_code[1:3], 16)};{int(hex_code[3:5], 16)};{int(hex_code[5:], 16)}m  \033[0m\n"
+                )
+            print("8. Custom Colour\n")
+            chosenColor = input("Choose a colour by entering its index: ")
+
+            if chosenColor.isdigit() and int(chosenColor) == 8:
+                hex_code = str(
+                    input("Enter the hexcode for your custom color (include the #): ")
+                )
+                if self.isValidHex(hex_code):
+                    return hex_code
+                else:
+                    print("Invalid hexcode inputted!")
+            elif chosenColor.isdigit() and 1 <= int(chosenColor) <= len(COLORS):
+                hex_code = list(COLORS.values())[int(chosenColor) - 1]
+                return hex_code
+            else:
+                print("Invalid input, please choose a valid colour index.")
+
     def horizontalGrid(self):
         gridHeight = IMG_HEIGHT * self.num_rows
         gridWidth = IMG_WIDTH * self.num_cols
         grid = Image.new("RGBA", (gridWidth, gridHeight), (255, 0, 0, 0))
 
         customNameBool = qr.confirm(
-            "Would you like to choose a custom name for the horizontal grid?", default=False
+            "Would you like to choose a custom name for the horizontal grid?",
+            default=False,
         ).ask()
         if customNameBool:
             while True:
@@ -152,7 +201,8 @@ class Grid:
         gridWidth = IMG_WIDTH * self.num_cols
 
         customNameBool = qr.confirm(
-            "Would you like to choose a custom name for the vertical grid?", default=False
+            "Would you like to choose a custom name for the vertical grid?",
+            default=False,
         ).ask()
         if customNameBool:
             while True:
@@ -162,31 +212,47 @@ class Grid:
                 else:
                     print("Invalid filename!")
         else:
-            customName = "Grid-Vertical.png"
+            customName = "Grid-Vertical"
 
-        qr.print("Plotting Slanted Grid now...", style="bold fg:yellow")
-
+        colorGrid = Image.new("RGBA", (gridWidth, gridHeight), (0, 0, 0, 0))
         grid = Image.new("RGBA", (gridWidth, gridHeight), (255, 0, 0, 0))
         border = Image.open(self.borderName)
 
+        bgPolygon = ImageDraw.Draw(colorGrid)
+        qr.print("Choose a color for the background:", style="bold fg:yellow")
+        bgColor = self.colorChoose()
+        rgbTuple = self.hexToRgb(bgColor)
+        plotPoints = [
+            (0, PADDING * (self.num_cols - 1) + BRDR_HEIGHT),
+            (gridWidth, 0),
+            (gridWidth, gridHeight - BRDR_HEIGHT - PADDING * (self.num_cols - 1)),
+            (0, gridHeight - 10),
+        ]
+        bgPolygon.polygon(plotPoints, fill=rgbTuple)
+        grid.paste(colorGrid)
+
+        qr.print("Plotting Slanted Grid now...", style="bold fg:yellow")
+        
         # This loop places the white borders on the top and the bottom of the grid
         for i in range(len(self.imgs)):
             colNum = i % self.num_cols
             x = IMG_WIDTH * colNum
             y = PADDING * (self.num_cols - (colNum + 1))
             try:
-                grid.paste(border, (x, y))
+                grid.paste(border, (x, y), mask=border)
             except Exception as e:
                 print(f"Failed to place top border for column {colNum+1}!")
                 input()
                 exit(-1)
             y = gridHeight - BRDR_HEIGHT - PADDING * (colNum)
             try:
-                grid.paste(border, (x, y))
+                grid.paste(border, (x, y), mask=border)
             except Exception as e:
                 print(f"Failed to place bottom border for column {colNum+1}")
                 input()
                 exit(-1)
+
+        bgPolygon.polygon(plotPoints, fill=rgbTuple)
 
         # Places the image at their respective positions
         for i, image in enumerate(self.imgs):
