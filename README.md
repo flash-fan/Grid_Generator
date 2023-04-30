@@ -30,7 +30,7 @@ It will generate an executable in the `/dist` folder
 
 ## Features to be added:
 - Support for background images
-- Colour layer behind the grid 
+- ~~Colour layer behind the grid~~ [2023-04-30]
 - ~~Horizontal grid option~~ [2023-04-29]
 - ~~Custom names for grid~~ [2023-04-29]
 - Custom location to save the grid
