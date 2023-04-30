@@ -20,9 +20,6 @@ pyinstaller ./{AppName}.spec
 
 It will generate an executable in the `/dist` folder
 
-## Requirements: 
-- Active Internet connection (required to fetch a border from imgur)
-
 ## Usage: 
 
 - Run the .exe file
