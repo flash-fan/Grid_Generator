@@ -7,9 +7,12 @@ packaging==23.1
 pathspec==0.11.1
 pefile==2023.2.7
 Pillow==9.5.0
-platformdirs==3.3.0
+platformdirs==3.5.0
+prompt-toolkit==3.0.38
 pyinstaller==5.10.1
 pyinstaller-hooks-contrib==2023.2
-pywin32==306
 pywin32-ctypes==0.2.0
+questionary==1.10.0
+termcolor==2.3.0
 tomli==2.0.1
+wcwidth==0.2.6
