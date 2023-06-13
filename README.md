@@ -1,11 +1,11 @@
-# Grid_Generator
+# Tykhe Grid Generator
 Simple app to generate grids using pillow library and python.
 
-## Installation: 
+## Installation:
 
 No installation is required. Simply download the executable from [Releases](https://github.com/flash-fan/Grid_Generator/releases) and run it.
 
-## Compiling: 
+## Compiling
 
 This project was built using [PyInstaller](https://github.com/pyinstaller/pyinstaller). To build it yourself, follow these steps:
 
