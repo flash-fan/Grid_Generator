@@ -1,7 +1,7 @@
 # Tykhe Grid Generator
 Simple app to generate grids using pillow library and python.
 
-## Installation:
+## Installation
 
 No installation is required. Simply download the executable from [Releases](https://github.com/flash-fan/Grid_Generator/releases) and run it.
 
@@ -20,7 +20,7 @@ pyinstaller ./{AppName}.spec
 
 It will generate an executable in the `/dist` folder
 
-## Usage: 
+## Usage
 
 - Run the .exe file
 - Select the folder in which cards are stored (each card must be of dimensions 600x800px)
