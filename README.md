@@ -28,7 +28,7 @@ It will generate an executable in the `/dist` folder
 - Grid will be generated automatically in the same folder as the exe file with the name `grid.png` (or a custom name, if one is provided)
 
 
-## Features to be added:
+## Features to be added
 - Support for background images
 - ~~Colour layer behind the grid~~ [2023-04-30]
 - ~~Horizontal grid option~~ [2023-04-29]
